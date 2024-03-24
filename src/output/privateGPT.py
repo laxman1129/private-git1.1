@@ -10,7 +10,7 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.vectorstores import Chroma
 from langchain.llms import GPT4All, LlamaCpp
 
-from src.config.constants import CHROMA_SETTINGS
+from src.config import constants
 
 load_dotenv()
 
@@ -39,7 +39,7 @@ def privateGPT():
     args = parse_arguments()
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
     db = Chroma(persist_directory=persist_directory,
-                embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
+                embedding_function=embeddings, client_settings=constants.CHROMA_SETTINGS)
     retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
     callback = [] if args.mute_stream else [StreamingStdOutCallbackHandler()]
 

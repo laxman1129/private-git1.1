@@ -5,9 +5,9 @@ from dotenv import load_dotenv  # for loading environment variables
 from multiprocessing import Pool  # for parallel processing
 from tqdm import tqdm  # for progress bar
 
-from src.config.constants import CHROMA_SETTINGS  # for loading settings
+from src.config import constants  # for loading settings
 # for loading documents from various sources using langchain
-from src.config.loader_mapping import LOADER_MAPPING
+from src.config import loader_mapping
 from src.input.email_loader import EmailLoader  # for loading emails
 # for splitting text into sentences
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -20,7 +20,7 @@ load_dotenv()  # load environment variables from .env file
 # get the directory to store the vectors
 persist_directory = os.environ.get("PERSIST_DIRECTORY")
 # get the directory to read the documents from
-source_directory = os.environ.get("SOURCE_DIRECTORY")
+source_directory = os.environ.get("SOURCE_DIRECTORY","source_documents")
 # get the name of the embedding model
 embeddings_model_name = os.environ.get("EMBEDDINGS_MODEL_NAME")
 # get the chunk size for parallel processing
@@ -47,10 +47,11 @@ def does_vector_store_exist():
 
 def load_single_document(file_path: str) -> Document:
     """Load a single document from a file path"""
-    ext = "." + file_path.rsplit(".", 1)[1]
+    ext = "." + file_path.rsplit(".", 1)[-1]
 
-    for ext in LOADER_MAPPING.items():
-        loader_class, loader_args = LOADER_MAPPING[ext]
+    if ext in loader_mapping.LOADER_MAPPING:
+        print("-------------ext----->", ext)
+        loader_class, loader_args = loader_mapping.LOADER_MAPPING[ext]
         loader = loader_class(file_path, **loader_args)
         loader.load()
 
@@ -58,36 +59,35 @@ def load_single_document(file_path: str) -> Document:
 def load_documents(source_directory: str, ignored_files: List[str] = []) -> List[Document]:
     """Loads all documents from the source directory. Ignores files in ignored_files list"""
     all_files = []
-    for ext in LOADER_MAPPING:
-        all_files.extend(glob.glob(os.path.join(
-            source_directory, f"**/*{ext}", recursive=True)))
-        filtered_files = [
-            file_path for file_path in all_files if file_path not in ignored_files]
+    for ext in loader_mapping.LOADER_MAPPING:
+        all_files.extend(
+            glob.glob(os.path.join(source_directory, f"**/*{ext}"), recursive=True)
+        )
+    filtered_files = [file_path for file_path in all_files if file_path not in ignored_files]
 
-        with Pool(processes=os.cpu_count()) as pool:
-            results = []
-            with tqdm(total=len(filtered_files), desc="Loading documents", ncols=80) as pbar:
-                for i, doc in enumerate(pool.imap_unordered(load_single_document, filtered_files)):
-                    results.append(doc)
-                    pbar.update()
-        return results
+    with Pool(processes=os.cpu_count()) as pool:
+        results = []
+        with tqdm(total=len(filtered_files), desc="Loading documents", ncols=80) as pbar:
+            for i, docs in enumerate(pool.imap_unordered(load_single_document, filtered_files)):
+                results.append(docs)
+                pbar.update()
+
+    return results
 
 
 def process_documents(ignored_files: List[str] = []) -> List[Document]:
     """Load documents and split in chunks"""
-    print(f"Loading documents from {source_directory}")
+    print(f"------------------------------->Loading documents from {source_directory}")
     documents = load_documents(source_directory, ignored_files)
 
     if not documents:
-        print("No new documents to read")
+        print("------------------------------->No new documents to read")
         exit(0)
 
-    print(f"Loaded {len(documents)} documents from {source_directory}")
-
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-    texts = text_splitter.split(documents)
-    print(f"Split {len(texts)} chunks of text (max. {chunk_size} tokens each)")
+    print(f"------------------------------->Loaded {len(documents)} documents from {source_directory}")
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    texts = text_splitter.split_documents(documents)
+    print(f"------------------------------->Split {len(texts)} chunks of text (max. {chunk_size} tokens each)")
     return texts
 
 
@@ -95,23 +95,23 @@ def ingest():
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
 
     if does_vector_store_exist():
-        print(f"Appending to existing vector store at {persist_directory}")
+        print(f"------------------------------->Appending to existing vector store at {persist_directory}")
         db = Chroma(persist_directory=persist_directory,
-                    embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
+                    embedding_function=embeddings, client_settings=constants.CHROMA_SETTINGS)
         collection = db.get()
         texts = process_documents([metadata['source']
                                   for metadata in collection['metadatas']])
-        print(f"Creating embeddings. May take a while...")
+        print(f"------------------------------->Creating embeddings. May take a while...")
         db.add_documents(texts)
     else:
-        print(f"Creating new vector store at {persist_directory}")
+        print(f"------------------------------->Creating new vector store at {persist_directory}")
         texts = process_documents()
-        print(f"Creating embeddings. May take a while...")
+        print(f"------------------------------->Creating embeddings. May take a while...")
         db = Chroma(texts, embeddings, persist_directory=persist_directory,
-                    client_settings=CHROMA_SETTINGS)
+                    client_settings=constants.CHROMA_SETTINGS)
     db.persist()
     db = None
-    print("Ingestion complete. You Can run privateGPT.py to query your documents.")
+    print("------------------------------->Ingestion complete. You Can run privateGPT.py to query your documents.")
 
 
 def main():
