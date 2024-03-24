@@ -50,7 +50,6 @@ def load_single_document(file_path: str) -> List[Document]:
     ext = "." + file_path.rsplit(".", 1)[-1]
 
     if ext in loader_mapping.LOADER_MAPPING:
-        print("-------------ext----->", ext)
         loader_class, loader_args = loader_mapping.LOADER_MAPPING[ext]
         loader = loader_class(file_path, **loader_args)
         return loader.load()
@@ -81,17 +80,10 @@ def process_documents(ignored_files: List[str] = []) -> List[Document]:
     """Load documents and split in chunks"""
     print(f"------------------------------->Loading documents from {source_directory}")
     documents = load_documents(source_directory, ignored_files)
-    print("----------one-->", documents)
-
     if not documents:
         print("------------------------------->No new documents to read")
         exit(0)
-
-    print(f"------------------------------->Loaded {len(documents)} documents from {source_directory}")
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-    for doc in documents:
-        print("---------->", doc)
-        print("---------------->", doc.page_content)
     texts = text_splitter.split_documents(documents)
     print(f"------------------------------->Split {len(texts)} chunks of text (max. {chunk_size} tokens each)")
     return texts
@@ -105,8 +97,7 @@ def ingest():
         db = Chroma(persist_directory=persist_directory,
                     embedding_function=embeddings, client_settings=constants.CHROMA_SETTINGS)
         collection = db.get()
-        texts = process_documents([metadata['source']
-                                  for metadata in collection['metadatas']])
+        texts = process_documents([metadata['source'] for metadata in collection['metadatas']])
         print(f"------------------------------->Creating embeddings. May take a while...")
         db.add_documents(texts)
     else:
