@@ -53,7 +53,7 @@ def load_single_document(file_path: str) -> Document:
         print("-------------ext----->", ext)
         loader_class, loader_args = loader_mapping.LOADER_MAPPING[ext]
         loader = loader_class(file_path, **loader_args)
-        loader.load()
+        return loader.load()
 
 
 def load_documents(source_directory: str, ignored_files: List[str] = []) -> List[Document]:
@@ -71,8 +71,8 @@ def load_documents(source_directory: str, ignored_files: List[str] = []) -> List
             for i, docs in enumerate(pool.imap_unordered(load_single_document, filtered_files)):
                 results.append(docs)
                 pbar.update()
-
-    return results
+        
+        return results
 
 
 def process_documents(ignored_files: List[str] = []) -> List[Document]:
@@ -85,7 +85,7 @@ def process_documents(ignored_files: List[str] = []) -> List[Document]:
         exit(0)
 
     print(f"------------------------------->Loaded {len(documents)} documents from {source_directory}")
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     texts = text_splitter.split_documents(documents)
     print(f"------------------------------->Split {len(texts)} chunks of text (max. {chunk_size} tokens each)")
     return texts
