@@ -45,7 +45,7 @@ def does_vector_store_exist():
     return False
 
 
-def load_single_document(file_path: str) -> Document:
+def load_single_document(file_path: str) -> List[Document]:
     """Load a single document from a file path"""
     ext = "." + file_path.rsplit(".", 1)[-1]
 
@@ -54,6 +54,8 @@ def load_single_document(file_path: str) -> Document:
         loader_class, loader_args = loader_mapping.LOADER_MAPPING[ext]
         loader = loader_class(file_path, **loader_args)
         return loader.load()
+    
+    raise ValueError(f"Unsupported file extension '{ext}'") 
 
 
 def load_documents(source_directory: str, ignored_files: List[str] = []) -> List[Document]:
@@ -69,7 +71,7 @@ def load_documents(source_directory: str, ignored_files: List[str] = []) -> List
         results = []
         with tqdm(total=len(filtered_files), desc="Loading documents", ncols=80) as pbar:
             for i, docs in enumerate(pool.imap_unordered(load_single_document, filtered_files)):
-                results.append(docs)
+                results.extend(docs)
                 pbar.update()
         
         return results
@@ -79,6 +81,7 @@ def process_documents(ignored_files: List[str] = []) -> List[Document]:
     """Load documents and split in chunks"""
     print(f"------------------------------->Loading documents from {source_directory}")
     documents = load_documents(source_directory, ignored_files)
+    print("----------one-->", documents)
 
     if not documents:
         print("------------------------------->No new documents to read")
@@ -86,6 +89,9 @@ def process_documents(ignored_files: List[str] = []) -> List[Document]:
 
     print(f"------------------------------->Loaded {len(documents)} documents from {source_directory}")
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    for doc in documents:
+        print("---------->", doc)
+        print("---------------->", doc.page_content)
     texts = text_splitter.split_documents(documents)
     print(f"------------------------------->Split {len(texts)} chunks of text (max. {chunk_size} tokens each)")
     return texts
@@ -107,8 +113,7 @@ def ingest():
         print(f"------------------------------->Creating new vector store at {persist_directory}")
         texts = process_documents()
         print(f"------------------------------->Creating embeddings. May take a while...")
-        db = Chroma(texts, embeddings, persist_directory=persist_directory,
-                    client_settings=constants.CHROMA_SETTINGS)
+        db = Chroma.from_documents(texts, embeddings, persist_directory=persist_directory, client_settings=constants.CHROMA_SETTINGS)
     db.persist()
     db = None
     print("------------------------------->Ingestion complete. You Can run privateGPT.py to query your documents.")
