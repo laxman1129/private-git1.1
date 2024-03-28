@@ -77,8 +77,8 @@ def privateGPT():
         end = time.time()
 
         print(f"Question: {question}")
-        print(f"Time taken: {end - start:.2f}s")
         print(f"Answer: {answer}")
+        print(f"Time taken: {end - start:.2f}s")
 
 
         for doc in docs:
