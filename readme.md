@@ -53,6 +53,8 @@
 
 ## References
 
+- https://ts.llamaindex.ai/
+
 ---
 ## fixing 
 
