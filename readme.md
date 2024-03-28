@@ -56,6 +56,14 @@
 - https://ts.llamaindex.ai/
 
 ---
+## models
+
+ggml-gpt4all-j-v1.3-groovy.bin  
+ggml-vic13b-q5_1.bin  
+ggml-vic13b-uncensored-q5_1.bin  
+ggml-vic13b-uncensored-q8_0.bin
+
+---
 ## fixing 
 
 ```
