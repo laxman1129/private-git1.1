@@ -7,8 +7,9 @@
 ### building the project
 - create conda environment and activate it
     ```
-    conda create -n privategpt python  
-    conda activate privategpt 
+    conda create -p venv python --y
+    conda info --envs
+    conda activate <venv> 
     ```
 - install the requirements, it takes some time (7-10 minutes)
     ```

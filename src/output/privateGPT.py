@@ -12,14 +12,21 @@ from langchain.llms import GPT4All, LlamaCpp
 
 from src.config import constants
 
+import gradio as gr
+
 load_dotenv()
 
 embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME')
 persist_directory = os.environ.get('PERSIST_DIRECTORY')
 
 model_type = os.environ.get('MODEL_TYPE')
-model_path = os.environ.get('MODEL_PATH')
-model_n_ctx = int(os.environ.get('MODEL_N_CTX'))
+
+vicuna_model_path = os.environ.get('VICUNA_MODEL_PATH')
+vicuna_model_n_ctx= os.environ.get('VICUNA_MODEL_N_CTX')
+
+gpt_model_path = os.environ.get('GPT_MODEL_PATH')
+gpt_model_n_ctx= os.environ.get('GPT_MODEL_N_CTX')
+
 model_n_batch = int(os.environ.get('MODEL_N_BATCH'))
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS', 4))
 
@@ -34,8 +41,7 @@ def parse_arguments():
 
     return parser.parse_args()
 
-
-def privateGPT():
+def llm_function(question, chat_history):
     args = parse_arguments()
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
     db = Chroma(persist_directory=persist_directory,
@@ -45,15 +51,15 @@ def privateGPT():
 
     match model_type:
         case "GPT4All":
-            llm = GPT4All(model_path=model_path,
-                          n_ctx=model_n_ctx,
+            llm = GPT4All(model_path=gpt_model_path,
+                          n_ctx=gpt_model_n_ctx,
                           backend='gptj',
                           n_batch=model_n_batch,
                           callbacks=callback,
                           verbose=False)
         case "LlamaCpp":
-            llm = LlamaCpp(model_path=model_path,
-                           n_ctx=model_n_ctx,
+            llm = LlamaCpp(model_path=vicuna_model_path,
+                           n_ctx=vicuna_model_n_ctx,
                            n_batch=model_n_batch,
                            callbacks=callback,
                            verbose=False)
@@ -62,25 +68,44 @@ def privateGPT():
 
     qa = RetrievalQA.from_chain_type(
         llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=not args.hide_source)
+    res = qa(question)
+    answer = res['result']
+    return answer
+    
+    
 
-    while True:
-        question = input("\nAsk a question: ")
-        if question.lower() in ['exit', 'quit']:
-            break
-        if question.strip() == "":
-            continue
+def privateGPT():    
+    title = "Incident IQ"
+    examples = [
+        "Why did CDS fail",
+        "Why did not receive meal allowance"
+    ]
 
-        start = time.time()
-        res = qa(question)
-        answer, docs = res['result'], [
-        ] if args.hide_source else res['source_documents']
-        end = time.time()
-
-        print(f"Question: {question}")
-        print(f"Answer: {answer}")
-        print(f"Time taken: {end - start:.2f}s")
+    gr.ChatInterface(
+        fn= llm_function,
+        title=title,
+        examples=examples
+    ).launch()
 
 
-        for doc in docs:
-            print(f"\n> " + doc.metadata['source'] + ":")
-            print(doc.page_content)
+    # while True:
+    #     question = input("\nAsk a question: ")
+    #     if question.lower() in ['exit', 'quit']:
+    #         break
+    #     if question.strip() == "":
+    #         continue
+
+    #     start = time.time()
+    #     res = qa(question)
+    #     answer, docs = res['result'], [
+    #     ] if args.hide_source else res['source_documents']
+    #     end = time.time()
+
+    #     print(f"Question: {question}")
+    #     print(f"Answer: {answer}")
+    #     print(f"Time taken: {end - start:.2f}s")
+
+
+    #     for doc in docs:
+    #         print(f"\n> " + doc.metadata['source'] + ":")
+    #         print(doc.page_content)
