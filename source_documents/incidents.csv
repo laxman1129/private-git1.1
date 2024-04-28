@@ -1,0 +1,51 @@
+Incident ID,Description,Severity,Assigned To,Status,Resolution
+INC001,Website Down,High,John Doe,In Progress,Identified server issue
+INC002,Email Delivery Failure,Medium,Jane Smith,Resolved,Updated email server settings
+INC003,Network Latency,High,Bob Johnson,Resolved,Reconfigured network routers
+INC004,Application Error,Medium,Mary Brown,In Progress,Investigating issue
+INC005,Database Connection Failure,High,Sam Wilson,Resolved,Restarted database server
+INC006,Printer Offline,Low,Emily Lee,Resolved,Rebooted printer
+INC007,Software Crashing,High,Alex Chen,In Progress,Analyzing crash reports
+INC008,Security Breach,Critical,Mark Taylor,Resolved,Patched security vulnerability
+INC009,Server Overload,High,Sarah White,Resolved,Optimized server resources
+INC010,Data Loss,Critical,Mike Green,Resolved,Restored data from backup
+INC011,Website Slow Loading,Medium,John Doe,Resolved,Optimized website code
+INC012,Email Attachment Issue,Low,Jane Smith,In Progress,Investigating email server configuration
+INC013,Network Outage,High,Bob Johnson,Resolved,Replaced faulty network switch
+INC014,Application Freeze,High,Mary Brown,Resolved,Updated application patch
+INC015,Database Corruption,Critical,Sam Wilson,In Progress,Restoring database from backup
+INC016,Printer Paper Jam,Low,Emily Lee,Resolved,Cleared paper jam
+INC017,Software Update Failure,Medium,Alex Chen,Resolved,Rolled back to previous software version
+INC018,Security Audit Alert,High,Mark Taylor,In Progress,Conducting security audit
+INC019,Server Disk Space Full,Medium,Sarah White,Resolved,Freed up disk space
+INC020,Data Breach Investigation,Critical,Mike Green,Resolved,Identified breach source and mitigated
+INC021,Website Content Update,Low,John Doe,Resolved,Updated website content
+INC022,Email Server Maintenance,Medium,Jane Smith,Resolved,Completed routine server maintenance
+INC023,Network Performance Issue,High,Bob Johnson,Resolved,Optimized network configurations
+INC024,Application Compatibility,Medium,Mary Brown,In Progress,Testing application on different systems
+INC025,Database Backup Failure,High,Sam Wilson,Resolved,Fixed backup process
+INC026,Printer Toner Replacement,Low,Emily Lee,Resolved,Replaced printer toner
+INC027,Software License Expiry,Medium,Alex Chen,Resolved,Renewed software license
+INC028,Security Incident Response,High,Mark Taylor,In Progress,Investigating security incident
+INC029,Server Hardware Failure,Critical,Sarah White,Resolved,Replaced faulty server hardware
+INC030,Data Migration,High,Mike Green,Resolved,Completed data migration
+INC031,Website SSL Certificate Expired,High,John Doe,Resolved,Renewed SSL certificate
+INC032,Email Spam Filter Issue,Medium,Jane Smith,Resolved,Adjusted spam filter settings
+INC033,Network Configuration Error,High,Bob Johnson,In Progress,Troubleshooting network configuration
+INC034,Application Bug,Medium,Mary Brown,In Progress,Debugging application code
+INC035,Database Performance Degradation,High,Sam Wilson,Resolved,Optimized database indexes
+INC036,Printer Driver Installation,Low,Emily Lee,Resolved,Installed correct printer drivers
+INC037,Software Installation Failure,Medium,Alex Chen,Resolved,Reinstalled software
+INC038,Security Patch Deployment,High,Mark Taylor,In Progress,Deploying security patches
+INC039,Server Backup Configuration,Medium,Sarah White,Resolved,Configured server backup schedule
+INC040,Data Recovery,Critical,Mike Green,Resolved,Successfully recovered lost data
+INC041,Website Login Issue,Low,John Doe,Resolved,Reset user passwords
+INC042,Email Server Downtime,High,Jane Smith,Resolved,Restarted email server
+INC043,Network Firewall Configuration,High,Bob Johnson,In Progress,Updating firewall rules
+INC044,Application Crash,Medium,Mary Brown,In Progress,Investigating crash logs
+INC045,Database Replication Failure,Critical,Sam Wilson,Resolved,Resynchronized database replication
+INC046,Printer Connectivity Issue,Low,Emily Lee,Resolved,Reconnected printer to network
+INC047,Software License Compliance,Medium,Alex Chen,Resolved,Audited and updated software licenses
+INC048,Security Incident Investigation,High,Mark Taylor,In Progress,Conducting forensic analysis
+INC049,Server Resource Allocation,Medium,Sarah White,Resolved,Adjusted server resource allocation
+INC050,Data Backup Verification,Critical,Mike Green,Resolved,Verified integrity of data backup
