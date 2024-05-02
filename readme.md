@@ -6,6 +6,8 @@
 
 ### building the project
 - create conda environment and activate it
+    - https://llama-cpp-python.readthedocs.io/en/latest/install/macos/
+    
     ```
     conda create -p venv python --y
     conda info --envs

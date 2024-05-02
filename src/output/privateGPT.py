@@ -59,6 +59,7 @@ def llm_function(question, chat_history):
                           verbose=False)
         case "LlamaCpp":
             llm = LlamaCpp(model_path=vicuna_model_path,
+                           n_gpu_layers=40,
                            n_ctx=vicuna_model_n_ctx,
                            n_batch=model_n_batch,
                            callbacks=callback,

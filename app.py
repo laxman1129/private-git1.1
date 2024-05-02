@@ -10,7 +10,7 @@ load_dotenv()
 source_directory = os.environ.get("SOURCE_DIRECTORY","source_documents")
 persist_directory = os.environ.get("PERSIST_DIRECTORY")
 
-shutil.rmtree(persist_directory)
+# shutil.rmtree(persist_directory)
 
 def main():
     print("------------------------------->Ingesting documents...")
