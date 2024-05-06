@@ -7,8 +7,9 @@ import shutil
 
 load_dotenv()
 
-source_directory = os.environ.get("SOURCE_DIRECTORY","source_documents")
+source_directory = os.environ.get("SOURCE_DIRECTORY", "source_documents")
 persist_directory = os.environ.get("PERSIST_DIRECTORY")
+
 
 # shutil.rmtree(persist_directory)
 
